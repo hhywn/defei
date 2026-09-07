@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Jstudy 考试中心 — Delphi VCL 界面预览(1:1 设计稿)</title>
+<style>
+  :root{
+    --bg:#F4F6FA; --card:#FFFFFF; --ink:#101828; --ink2:#6B7280; --ink3:#9CA3AF;
+    --line:#E5E9F0; --brand:#2563EB; --brand-hover:#1D4ED8;
+    --side:#1F2937; --side-hover:#273349; --side-item:#2A3649; --sel:#2563EB;
+    --sub:#94A3B8; --sub2:#64748B;
+    --tblue-bg:#DBEAFE; --tblue-fg:#1D4ED8;
+    --tgreen-bg:#D1FAE5; --tgreen-fg:#047857;
+    --tamber-bg:#FEF3C7; --tamber-fg:#B45309;
+    --av-bg:#DBEAFE; --av-fg:#1D4ED8;
+    --ghost-bd:#D0D5DD; --ghost-fg:#374151;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; user-select:none}
+  body{
+    background:#E8EBF2; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    font-family:'Microsoft YaHei UI','PingFang SC','Hiragino Sans GB',system-ui,sans-serif;
+    color:var(--ink);
+  }
+  .app{position:relative; width:1100px; height:720px; background:var(--bg);
+    border-radius:12px; overflow:hidden; box-shadow:0 24px 60px rgba(15,23,42,.28)}
+  /* ---------- 左侧深色导航 ---------- */
+  .side{position:absolute; left:0; top:0; bottom:0; width:216px; background:var(--side)}
+  .logo{height:86px; display:flex; align-items:center; gap:12px; padding:0 20px}
+  .logo-tile{width:34px; height:34px; border-radius:10px; background:var(--sel);
+    color:#fff; font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center}
+  .logo-txt{color:#fff; font-weight:700; font-size:13px; letter-spacing:.2px}
+  .nav{position:absolute; top:102px; left:16px; right:16px}
+  .nav-item{display:flex; align-items:center; gap:14px; height:40px; padding:0 12px;
+    border-radius:10px; color:var(--sub); font-size:13px; margin-bottom:6px}
+  .nav-item svg{width:17px; height:17px; flex:none}
+  .nav-item:hover{background:var(--side-hover); color:#D6DEEB}
+  .nav-item.on{background:var(--sel); color:#fff; font-weight:600}
+  .side-user{position:absolute; left:16px; right:16px; bottom:32px; height:68px;
+    background:var(--side-item); border-radius:14px; display:flex; align-items:center; padding:0 14px; gap:12px}
+  .avatar-mini{width:38px; height:38px; border-radius:50%; background:var(--sel); color:#fff;
+    font-weight:600; display:flex; align-items:center; justify-content:center; font-size:13px}
+  .u-name{font-size:13px; font-weight:600; color:#E5E7EB}
+  .u-role{font-size:11px; color:var(--sub); margin-top:2px}
+  /* ---------- 顶部栏 ---------- */
+  .top{position:absolute; left:216px; top:0; right:0; height:56px; background:var(--card);
+    border-bottom:1px solid var(--line); display:flex; align-items:center}
+  .top-title{font-size:19px; font-weight:700; padding-left:28px; letter-spacing:.3px}
+  .top-date{margin-left:18px; font-size:11px; color:var(--ink3); margin-top:5px}
+  .user{margin-left:auto; display:flex; align-items:center; gap:12px; margin-right:132px}
+  .user .u-avatar{width:38px; height:38px; border-radius:50%; background:var(--av-bg);
+    color:var(--av-fg); font-weight:600; display:flex; align-items:center; justify-content:center; font-size:13px}
+  .u-b{font-size:13px; font-weight:600}
+  .wbtn{width:44px; height:38px; border-radius:8px; display:flex; align-items:center;
+    justify-content:center; color:#5F6B7A}
+  .wbtn:hover{background:#F2F4F7}
+  .wbtn.close:hover{background:#FEE2E2; color:#B91C1C}
+  .wbtn svg{width:11px; height:11px}
+  /* ---------- 内容区 ---------- */
+  .main{position:absolute; left:216px; top:56px; right:0; bottom:0; padding:22px 28px 0}
+  .stats{display:flex; gap:16px}
+  .stat{flex:1; background:var(--card); border-radius:14px; height:92px; padding:0 20px;
+    display:flex; align-items:center; gap:18px}
+  .s-tile{width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center}
+  .s-tile svg{width:20px; height:20px}
+  .s-num{font-size:26px; font-weight:700; line-height:1.1}
+  .s-lbl{font-size:12px; color:var(--ink2); margin-top:3px}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin:24px 2px 0}
+  .sec-head h2{font-size:18px; font-weight:700}
+  .sec-head span{font-size:11px; color:var(--ink3)}
+  .rows{display:flex; flex-direction:column; gap:14px; margin-top:14px}
+  .row{background:var(--card); border-radius:14px; height:84px; padding:0 18px;
+    display:flex; align-items:center; gap:16px}
+  .r-tile{width:46px; height:46px; border-radius:12px; font-size:17px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; flex:none}
+  .r-mid{flex:1; min-width:0}
+  .r-title{font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .r-meta{font-size:11px; color:var(--ink2); margin-top:7px}
+  .r-score{font-size:18px; font-weight:700; color:var(--tgreen-fg); margin-right:-6px}
+  .r-score small{font-size:11px; font-weight:400; opacity:.75; margin-left:2px}
+  .pill{height:22px; padding:0 11px; border-radius:999px; font-size:11px;
+    display:flex; align-items:center; font-weight:500}
+  .btn{height:36px; border-radius:999px; padding:0 26px; font-size:13px; font-weight:600;
+    display:flex; align-items:center; cursor:pointer}
+  .btn.primary{background:var(--brand); color:#fff}
+  .btn.primary:hover{background:var(--brand-hover)}
+  .btn.ghost{border:1px solid var(--ghost-bd); color:var(--ghost-fg)}
+  .btn.ghost:hover{background:#F9FAFB}
+  /* 提醒条 + 底部 */
+  .tips{margin-top:18px; height:54px; background:var(--card); border-radius:14px;
+    display:flex; align-items:center; gap:12px; padding:0 20px; border:1px solid #EAF0FB}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--brand); flex:none}
+  .tips span{font-size:12px; color:var(--ink2)}
+  .foot{position:absolute; left:28px; right:28px; bottom:20px; display:flex; justify-content:space-between;
+    font-size:11px; color:var(--ink3)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ======== 左侧导航 ======== -->
+  <aside class="side">
+    <div class="logo">
+      <div class="logo-tile">J</div>
+      <div class="logo-txt">Jstudy 考试平台</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item"><svg><use href="#i-home"/></svg>首页</div>
+      <div class="nav-item on"><svg><use href="#i-doc"/></svg>考试管理</div>
+      <div class="nav-item"><svg><use href="#i-book"/></svg>题库</div>
+      <div class="nav-item"><svg><use href="#i-people"/></svg>考生管理</div>
+      <div class="nav-item"><svg><use href="#i-gear"/></svg>系统设置</div>
+    </nav>
+    <div class="side-user">
+      <div class="avatar-mini">周</div>
+      <div>
+        <div class="u-name">周老师</div>
+        <div class="u-role">系统管理员</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======== 顶部栏 ======== -->
+  <header class="top">
+    <div class="top-title">考试中心</div>
+    <div class="top-date">2026-09-07 · 星期一</div>
+    <div class="user">
+      <div><div class="u-b">周老师</div></div>
+      <div class="u-avatar">周</div>
+    </div>
+    <div class="wbtn"><svg><use href="#i-min"/></svg></div>
+    <div class="wbtn close"><svg><use href="#i-close"/></svg></div>
+  </header>
+
+  <!-- ======== 内容 ======== -->
+  <main class="main">
+    <div class="stats">
+      <div class="stat">
+        <div class="s-tile" style="background:#DBEAFE;color:#1D4ED8"><svg><use href="#i-clock"/></svg></div>
+        <div><div class="s-num">3</div><div class="s-lbl">待考试</div></div>
+      </div>
+      <div class="stat">
+        <div class="s-tile" style="background:#FEF3C7;color:#B45309"><svg><use href="#i-play"/></svg></div>
+        <div><div class="s-num">1</div><div class="s-lbl">进行中</div></div>
+      </div>
+      <div class="stat">
+        <div class="s-tile" style="background:#D1FAE5;color:#047857"><svg><use href="#i-check"/></svg></div>
+        <div><div class="s-num">28</div><div class="s-lbl">已完成</div></div>
+      </div>
+    </div>
+
+    <div class="sec-head"><h2>我的考试</h2><span>· 共 3 场</span></div>
+
+    <div class="rows">
+      <div class="row">
+        <div class="r-tile" style="background:#E0E7FF;color:#4338CA">数</div>
+        <div class="r-mid">
+          <div class="r-title">《数据结构》期中考试 · 2026 秋</div>
+          <div class="r-meta">08-25 14:00 开考 · 90 分钟 · 共 50 题 · 满分 100</div>
+        </div>
+        <div class="pill" style="background:#DBEAFE;color:#1D4ED8">未开始</div>
+        <div class="btn primary">进入考试</div>
+      </div>
+
+      <div class="row">
+        <div class="r-tile" style="background:#FEF3C7;color:#92400E">网</div>
+        <div class="r-mid">
+          <div class="r-title">《计算机网络》随堂测验(第 5 章)</div>
+          <div class="r-meta">09-04 已交卷 · 60 分钟 · 共 30 题</div>
+        </div>
+        <div class="pill" style="background:#FEF3C7;color:#B45309">待批阅</div>
+        <div class="btn ghost">查看成绩</div>
+      </div>
+
+      <div class="row">
+        <div class="r-tile" style="background:#D1FAE5;color:#047857">操</div>
+        <div class="r-mid">
+          <div class="r-title">《操作系统》课后练习</div>
+          <div class="r-meta">09-01 已完成 · 45 分钟 · 满分 100</div>
+        </div>
+        <div class="r-score">98<small>分</small></div>
+        <div class="pill" style="background:#D1FAE5;color:#047857">已完成</div>
+        <div class="btn ghost">查看回顾</div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <span class="dot"></span>
+      <span>考前提醒:考试期间客户端将全屏锁定并监测切屏(Alt+Tab / Win 键 / 任务栏),违规将记录并提醒,交卷后自动解锁。</span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span>UI Beauty Spike · Delphi VCL 纯自绘 · 无第三方控件</span>
+    <span>预览版 — 图标与字形为近似示意,最终以 Windows 渲染为准</span>
+  </footer>
+</div>
+
+<!-- 图标(SVG 手写, 与 Delphi 端 Segoe MDL2 码点一一对应) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5M5.5 9v10.5h13V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5.6C10 3.9 7.6 3.8 5 4v15.8c2.6-.2 5 .1 7 1.8 2-1.7 4.4-2 7-1.8V4c-2.6-.2-5-.1-7 1.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 5.6v16" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c.9-3.2 3.4-5 6.5-5s5.6 1.8 6.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="9.5" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17.5 15c2.6.4 4.4 2 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h13M20 18h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.4 2.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M9 6.2v11.6L19 12z" fill="currentColor"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-min" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+</body>
+</html>
