@@ -1,35 +1,44 @@
- name: build-delphi
+# ============================================================================
+#  免费 Windows 编译机(GitHub Actions)
+#  用法: 把本目录推到 GitHub 私有仓库后, push 即自动编译,
+#        也可在仓库 Actions 页手动点 "Run workflow"。
+#  产物: 编译成功后在 Actions 页该次运行底部 Artifacts 下载 EXE。
+# ============================================================================
+name: build-delphi
 
-  on:
-    push:
-      branches: [main, master]
-    workflow_dispatch:
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:        # 仓库网页上可手动触发
 
-  jobs:
-    build:
-      runs-on: windows-latest
-      steps:
-        - uses: actions/checkout@v4
+jobs:
+  build:
+    runs-on: windows-latest # 微软托管的 Windows Server 虚拟机, 免费
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: 安装 Delphi Community
-          uses: paolo-rossi/delphi-actions/action-install@v2
-          with:
-            version: 12.1
-            edition: Community
+      # Delphi Community 自动静默安装(社区维护动作)
+      # 若报 "action not found" 或输入参数失效, 把日志贴回来我改
+      - name: 安装 Delphi Community
+        uses: paolo-rossi/delphi-actions/action-install@v2
+        with:
+          version: 12.1      # 11 / 12.x 均可, 与本项目代码兼容
+          edition: Community
 
-        - name: 编译 JstudyClientSpike.dpr
-          shell: cmd
-          run: |
-            for /d %%D in ("C:\Program Files (x86)\Embarcadero\Studio\*") do set "BDS=%%~fD"
-            echo BDS=%BDS%
-            call "%BDS%\bin\rsvars.bat"
-            dcc32 -B JstudyClientSpike.dpr
-            if errorlevel 1 exit /b 1
-            dir JstudyClientSpike.exe
+      - name: 编译 JstudyClientSpike.dpr
+        shell: cmd
+        run: |
+          rem 找到最新安装的 Studio 目录并载入库路径环境(rsvars.bat)
+          for /d %%D in ("C:\Program Files (x86)\Embarcadero\Studio\*") do set "BDS=%%~fD"
+          echo BDS=%BDS%
+          call "%BDS%\bin\rsvars.bat"
+          dcc32 -B JstudyClientSpike.dpr
+          if errorlevel 1 exit /b 1
+          dir JstudyClientSpike.exe
 
-        - name: 上传编译产物
-          uses: actions/upload-artifact@v4
-          with:
-            name: JstudyClientSpike-win32
-            path: JstudyClientSpike.exe
-            if-no-files-found: error
+      - name: 上传编译产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: JstudyClientSpike-win32
+          path: JstudyClientSpike.exe
+          if-no-files-found: error
