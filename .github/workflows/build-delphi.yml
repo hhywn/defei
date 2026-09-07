@@ -1,0 +1,35 @@
+ name: build-delphi
+
+  on:
+    push:
+      branches: [main, master]
+    workflow_dispatch:
+
+  jobs:
+    build:
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: 安装 Delphi Community
+          uses: paolo-rossi/delphi-actions/action-install@v2
+          with:
+            version: 12.1
+            edition: Community
+
+        - name: 编译 JstudyClientSpike.dpr
+          shell: cmd
+          run: |
+            for /d %%D in ("C:\Program Files (x86)\Embarcadero\Studio\*") do set "BDS=%%~fD"
+            echo BDS=%BDS%
+            call "%BDS%\bin\rsvars.bat"
+            dcc32 -B JstudyClientSpike.dpr
+            if errorlevel 1 exit /b 1
+            dir JstudyClientSpike.exe
+
+        - name: 上传编译产物
+          uses: actions/upload-artifact@v4
+          with:
+            name: JstudyClientSpike-win32
+            path: JstudyClientSpike.exe
+            if-no-files-found: error
